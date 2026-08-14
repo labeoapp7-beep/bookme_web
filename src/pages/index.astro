@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { VacanciesBoard } from '../components/VacanciesBoard';
+---
+
+<Layout>
+	<div class="container hero-section">
+		<h1 class="text-h1 hero-title">ابحث عن <span class="highlight">شاليهك</span> المفضل اليوم</h1>
+		<p class="text-body text-muted hero-subtitle">
+			استعرض الشواغر المتاحة اليوم للحجز الفوري مباشرة من الملاك، بدون وسطاء أو عمولات إضافية.
+		</p>
+	</div>
+
+	<div class="container board-section">
+		<VacanciesBoard client:load />
+	</div>
+</Layout>
+
+<style>
+	.hero-section {
+		text-align: center;
+		margin-bottom: var(--space-xl);
+	}
+	
+	.hero-title {
+		margin-bottom: var(--space-md);
+	}
+	
+	.highlight {
+		color: var(--color-primary);
+	}
+	
+	.hero-subtitle {
+		max-width: 600px;
+		margin-inline: auto;
+	}
+</style>

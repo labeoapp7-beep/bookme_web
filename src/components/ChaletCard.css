@@ -1,0 +1,171 @@
+.chalet-card {
+  position: relative;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.chalet-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.chalet-card.reserved {
+  opacity: 0.8;
+  background: var(--color-reserved-bg);
+}
+
+.reserved-badge {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md); /* left in LTR, but in RTL context we might want inline-end */
+  inset-inline-end: var(--space-md);
+  background-color: var(--color-reserved);
+  color: white;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-small);
+  font-weight: 600;
+  z-index: 2;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.chalet-name {
+  color: var(--color-primary);
+  margin: 0;
+  word-break: break-word;
+}
+
+.section-badge {
+  background-color: var(--color-border);
+  color: var(--color-text-main);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.card-location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.card-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-success-text);
+  background-color: var(--color-success-bg);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-md);
+  align-self: flex-start;
+}
+
+.price-currency {
+  font-size: 1rem;
+  margin-inline-start: var(--space-xs);
+}
+
+.card-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 100px;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-md);
+  font-weight: 500;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-call {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-call:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-whatsapp {
+  background-color: var(--color-whatsapp);
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background-color: var(--color-whatsapp-hover);
+}
+
+.btn-map {
+  background-color: transparent;
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+}
+
+.btn-map:hover {
+  background-color: var(--color-background);
+}
+
+.chalet-card.reserved .action-btn {
+  filter: grayscale(1);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.notes-container {
+  margin-top: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-sm);
+}
+
+.notes-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  padding: var(--space-xs) 0;
+  width: 100%;
+  text-align: start;
+}
+
+.notes-toggle-btn:hover {
+  color: var(--color-primary);
+}
+
+.notes-content {
+  margin-top: var(--space-xs);
+  padding: var(--space-sm);
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-small);
+  color: var(--color-text-main);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+

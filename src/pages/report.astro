@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReportForm from '../components/ReportForm';
+---
+
+<Layout title="الإبلاغ عن مخالفة | شاغر اليوم">
+  <div class="container page-content glass-panel">
+    <h1 class="text-h1">الإبلاغ عن إساءة أو مخالفة</h1>
+    
+    <div class="content-body mt-4">
+      <p class="text-body text-muted">
+        نحرص في منصة "شاغر اليوم" على تقديم بيئة موثوقة ونظيفة. إذا واجهت أي إعلان وهمي، صورة غير لائقة، أو إساءة استخدام من قبل أحد الملاك، نرجو منك إبلاغنا فوراً وسنقوم باتخاذ الإجراء اللازم.
+      </p>
+
+      <ReportForm client:load />
+      
+      <p class="text-small text-muted mt-2">
+        *ملاحظة: سيتم مراجعة بلاغك من قبل الإدارة في أقرب وقت ممكن.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-content {
+    margin-top: var(--space-xl);
+    padding: var(--space-xl);
+    max-width: 800px;
+  }
+  
+  .mt-4 {
+    margin-top: var(--space-lg);
+  }
+  
+  .mt-2 {
+    margin-top: var(--space-sm);
+  }
+
+  .content-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+</style>

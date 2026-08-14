@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="الأسئلة الشائعة | شاغر اليوم">
+  <div class="container page-content glass-panel">
+    <h1 class="text-h1">الأسئلة الشائعة (FAQ)</h1>
+    
+    <div class="content-body mt-4">
+      <div class="faq-item">
+        <h3 class="text-h2 text-primary">هل منصة شاغر اليوم تأخذ عمولة على الحجوزات؟</h3>
+        <p class="text-body">
+          لا، المنصة مجانية تماماً للباحثين عن الشاليهات. نحن نعمل كوسيط إعلاني فقط لتسهيل الوصول للشاليهات المتاحة، وكل المبالغ المالية تُدفع مباشرة للمالك.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="text-h2 text-primary">كيف أضمن أن الشاليه متاح فعلاً؟</h3>
+        <p class="text-body">
+          يتم تحديث حالة الشواغر بشكل مباشر ولحظي من قبل الملاك من خلال تطبيق الإدارة الخاص بهم. إذا كان الشاليه يظهر كـ "متاح"، فهو متاح للحجز اليوم. بمجرد أن يتم حجزه، سيقوم المالك بتحديث حالته وسيظهر لك كـ "محجوز".
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="text-h2 text-primary">هل يجب علي التسجيل في الموقع لكي أحجز؟</h3>
+        <p class="text-body">
+          لا، الموقع مفتوح للجميع. يمكنك تصفح الشواغر، الضغط على أزرار التواصل (اتصال أو واتساب)، والتفاوض مع المالك مباشرة دون الحاجة لأي تسجيل حساب.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="text-h2 text-primary">أنا مالك شاليه وأريد إضافة شاليهي، كيف أفعل ذلك؟</h3>
+        <p class="text-body">
+          يمكنك الانضمام للمنصة عبر تحميل تطبيق الجوال الخاص بالملاك والتسجيل فيه. بعد تفعيل حسابك، سيمكنك إدارة شاليهاتك ونشر شواغرك بضغطة زر واحدة لتظهر هنا في الموقع.
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-content {
+    margin-top: var(--space-xl);
+    padding: var(--space-xl);
+    max-width: 800px;
+  }
+  
+  .mt-4 {
+    margin-top: var(--space-lg);
+  }
+
+  .content-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .text-primary {
+    color: var(--color-primary);
+    margin-bottom: var(--space-sm);
+  }
+</style>
