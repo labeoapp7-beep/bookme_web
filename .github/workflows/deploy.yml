@@ -1,52 +1,39 @@
-name: Deploy to GitHub Pages
+name: Deploy Shaagher Web to Hostinger
 
 on:
-  # Trigger the workflow every time you push to the `main` branch
   push:
-    branches: [ main ]
-  # Allows you to run this workflow manually from the Actions tab on GitHub.
-  workflow_dispatch:
-
-# Allow this job to clone the repo and create a page deployment
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches:
+      - main # يتم التشغيل التلقائي عند عمل Push على فرع main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout your repository using git
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
-      - name: Setup Node.js
+
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "npm"
-      - name: Install dependencies
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
         run: npm ci
-      - name: Create .env file
-        run: |
-          echo "PUBLIC_SUPABASE_URL=${{ secrets.PUBLIC_SUPABASE_URL }}" >> .env
-          echo "PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}" >> .env
-      - name: Build Astro site
-        run: npm run build
+
+      - name: 🏗️ Build Astro Project
         env:
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
+        run: npm run build
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: 🚀 Deploy to Hostinger Subdomain via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /public_html/shaghir/ # مسار مجلد الدومين الفرعي في Hostinger
+          dangerous-clean-slate: false

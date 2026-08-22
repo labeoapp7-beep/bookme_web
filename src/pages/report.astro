@@ -1,21 +1,37 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ReportForm from '../components/ReportForm';
+
+const supportEmail = 'help@zimamak.com';
 ---
 
 <Layout title="الإبلاغ عن مخالفة | شاغر اليوم">
   <div class="container page-content glass-panel">
-    <h1 class="text-h1">الإبلاغ عن إساءة أو مخالفة</h1>
+    <div class="header-section">
+      <h1 class="text-h1">الإبلاغ عن إساءة أو مخالفة 🛡️</h1>
+      <p class="text-body text-muted mt-2">
+        نحرص في منصة "شاغر اليوم" على توفير بيئة آمنة وموثوقة لجميع المستخدمين. إذا واجهت أي إعلان وهمي، محاولة احتيال، صور غير لائقة، أو إساءة استخدام، نرجو منك إبلاغنا فوراً وسيقوم فريق المراجعة باتخاذ الإجراء اللازم.
+      </p>
+    </div>
     
     <div class="content-body mt-4">
-      <p class="text-body text-muted">
-        نحرص في منصة "شاغر اليوم" على تقديم بيئة موثوقة ونظيفة. إذا واجهت أي إعلان وهمي، صورة غير لائقة، أو إساءة استخدام من قبل أحد الملاك، نرجو منك إبلاغنا فوراً وسنقوم باتخاذ الإجراء اللازم.
-      </p>
-
       <ReportForm client:load />
+
+      <div class="direct-email-card">
+        <div class="card-icon">✉️</div>
+        <div class="card-text">
+          <h3 class="card-title">تواصل مباشر عبر البريد الإلكتروني</h3>
+          <p class="text-small text-muted">
+            إذا كنت ترغب بإرفاق صور، لقطات شاشة، أو تفاصيل مستندية، يمكنك مراسلة فريق البلاغات والدعم مباشرة على:
+          </p>
+          <a href={`mailto:${supportEmail}?subject=بلاغ عن مخالفة - منصة شاغر اليوم`} class="email-link">
+            {supportEmail}
+          </a>
+        </div>
+      </div>
       
-      <p class="text-small text-muted mt-2">
-        *ملاحظة: سيتم مراجعة بلاغك من قبل الإدارة في أقرب وقت ممكن.
+      <p class="text-small text-muted text-center mt-2">
+        * يتم استلام البلاغات وتحويلها فوراً إلى البريد الإداري <strong>{supportEmail}</strong> للمتابعة السريعة.
       </p>
     </div>
   </div>
@@ -27,6 +43,11 @@ import ReportForm from '../components/ReportForm';
     padding: var(--space-xl);
     max-width: 800px;
   }
+
+  .header-section {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-md);
+  }
   
   .mt-4 {
     margin-top: var(--space-lg);
@@ -36,9 +57,57 @@ import ReportForm from '../components/ReportForm';
     margin-top: var(--space-sm);
   }
 
+  .text-center {
+    text-align: center;
+  }
+
   .content-body {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
   }
+
+  .direct-email-card {
+    background: #F3F4F6;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-xs);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  .email-link {
+    display: inline-block;
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 1rem;
+    direction: ltr;
+    text-align: right;
+    transition: color 0.2s;
+  }
+
+  .email-link:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+  }
 </style>
+

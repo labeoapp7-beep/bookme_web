@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
+const SUPPORT_EMAIL = 'help@zimamak.com';
+
 export default function ReportForm() {
   const [chaletName, setChaletName] = useState('');
   const [reason, setReason] = useState('');
   const [details, setDetails] = useState('');
   const [location, setLocation] = useState('');
+  const [reporterContact, setReporterContact] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [isReadOnlyName, setIsReadOnlyName] = useState(false);
@@ -31,24 +34,51 @@ export default function ReportForm() {
     setStatus('loading');
     setErrorMessage('');
 
+    const finalChaletName = (!isReadOnlyName && location.trim() !== '') 
+      ? `${chaletName} (${location})` 
+      : chaletName;
+
     try {
-      const finalChaletName = (!isReadOnlyName && location.trim() !== '') 
-        ? `${chaletName} (${location})` 
-        : chaletName;
-
-      const { error } = await supabase
-        .from('vac_reports')
-        .insert({
-          chalet_name: finalChaletName,
-          reason,
-          details
+      // 1. Dispatch email directly to help@zimamak.com
+      try {
+        await fetch(`https://formsubmit.co/ajax/${SUPPORT_EMAIL}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            _subject: `[بلاغ جديد] - ${finalChaletName}`,
+            _template: 'table',
+            "اسم الشاليه / الإعلان": finalChaletName,
+            "سبب البلاغ": reason,
+            "تفاصيل البلاغ": details,
+            "وسيلة التواصل مع المبلّغ": reporterContact.trim() || 'لم يتم تحديدها',
+            "تاريخ ووقت الإرسال": new Date().toLocaleString('ar-SA')
+          })
         });
+      } catch (emailErr) {
+        console.warn('Email dispatch warning:', emailErr);
+      }
 
-      if (error) throw error;
+      // 2. Insert into Supabase table vac_reports for database archiving
+      try {
+        await supabase
+          .from('vac_reports')
+          .insert({
+            chalet_name: finalChaletName,
+            reason,
+            details
+          });
+      } catch (dbErr) {
+        console.warn('Database insert warning:', dbErr);
+      }
+
       setStatus('success');
       setChaletName('');
       setReason('');
       setDetails('');
+      setReporterContact('');
     } catch (err: any) {
       console.error(err);
       setStatus('error');
@@ -58,16 +88,28 @@ export default function ReportForm() {
 
   if (status === 'success') {
     return (
-      <div className="report-success">
-        <h2 className="text-h2" style={{ color: 'var(--color-primary)', marginBottom: '1rem' }}>شكراً لتعاونك!</h2>
-        <p className="text-body">تم استلام بلاغك بنجاح وسيقوم فريقنا بمراجعته واتخاذ الإجراء اللازم بأسرع وقت.</p>
-        <button 
-          onClick={() => setStatus('idle')}
-          className="btn-submit" 
-          style={{ marginTop: '1.5rem', width: 'auto', padding: '0.5rem 1.5rem' }}
-        >
-          إرسال بلاغ آخر
-        </button>
+      <div className="report-success animate-fade-in">
+        <div className="success-icon">✓</div>
+        <h2 className="text-h2" style={{ color: 'var(--color-primary)', marginBottom: '0.75rem' }}>تم إرسال البلاغ بنجاح!</h2>
+        <p className="text-body" style={{ color: 'var(--color-text-muted)', marginBottom: '1.25rem', lineHeight: '1.6' }}>
+          شكراً لتعاونك في الحفاظ على جودة ومصداقية المنصة. تم إرسال البلاغ مباشرة إلى فريق المتابعة عبر البريد الإلكتروني (<strong>{SUPPORT_EMAIL}</strong>) وسنقوم بمراجعته فوراً.
+        </p>
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button 
+            onClick={() => setStatus('idle')}
+            className="btn-submit" 
+            style={{ width: 'auto', padding: '0.6rem 1.5rem', marginTop: 0 }}
+          >
+            إرسال بلاغ آخر
+          </button>
+          <a 
+            href={`mailto:${SUPPORT_EMAIL}?subject=متابعة بلاغ: ${encodeURIComponent(chaletName || 'شاغر اليوم')}`}
+            className="btn-email"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.5rem', textDecoration: 'none' }}
+          >
+            ✉️ مراسلة الدعم مباشرة
+          </a>
+        </div>
       </div>
     );
   }
@@ -76,7 +118,7 @@ export default function ReportForm() {
     <div className="report-form-container">
       <form className="report-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="chaletName">اسم الشاليه أو الإعلان</label>
+          <label htmlFor="chaletName">اسم الشاليه أو الإعلان <span className="required-star">*</span></label>
           <input 
             type="text" 
             id="chaletName" 
@@ -91,7 +133,7 @@ export default function ReportForm() {
 
         {!isReadOnlyName && (
           <div className="form-group">
-            <label htmlFor="location">المدينة والحي (مهم جداً لتحديد الشاليه)</label>
+            <label htmlFor="location">المدينة والحي (مهم جداً لتحديد الشاليه) <span className="required-star">*</span></label>
             <input 
               type="text" 
               id="location" 
@@ -104,7 +146,7 @@ export default function ReportForm() {
         )}
 
         <div className="form-group">
-          <label htmlFor="reason">سبب البلاغ</label>
+          <label htmlFor="reason">سبب البلاغ <span className="required-star">*</span></label>
           <select 
             id="reason" 
             required
@@ -114,26 +156,40 @@ export default function ReportForm() {
             <option value="">اختر السبب...</option>
             <option value="إعلان وهمي أو مضلل">إعلان وهمي أو مضلل</option>
             <option value="احتيال أو محاولة نصب">احتيال أو محاولة نصب</option>
-            <option value="صور غير لائقة">صور غير لائقة</option>
+            <option value="صور غير لائقة أو غير مطابقة">صور غير لائقة أو غير مطابقة</option>
             <option value="الرقم المعروض خاطئ أو لا يعمل">الرقم المعروض خاطئ أو لا يعمل</option>
+            <option value="طلب مبالغ خارج المنصة بشكل مشبوه">طلب مبالغ خارج المنصة بشكل مشبوه</option>
             <option value="أخرى">أخرى</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label htmlFor="details">تفاصيل إضافية</label>
+          <label htmlFor="details">تفاصيل البلاغ والمخالفة <span className="required-star">*</span></label>
           <textarea 
             id="details" 
-            rows={5} 
+            rows={4} 
             required 
-            placeholder="اكتب تفاصيل المخالفة هنا..."
+            placeholder="اكتب تفاصيل ما حدث بدقة لمساعدتنا على اتخاذ الإجراء السريع..."
             value={details}
             onChange={e => setDetails(e.target.value)}
           ></textarea>
         </div>
 
+        <div className="form-group">
+          <label htmlFor="reporterContact">
+            بريدك الإلكتروني أو رقم هاتفك <span className="optional-tag">(اختياري - لمتابعة البلاغ معك)</span>
+          </label>
+          <input 
+            type="text" 
+            id="reporterContact" 
+            placeholder="مثال: yourname@example.com أو 05XXXXXXXX"
+            value={reporterContact}
+            onChange={e => setReporterContact(e.target.value)}
+          />
+        </div>
+
         {status === 'error' && (
-          <div style={{ color: '#DC2626', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+          <div className="error-box">
             {errorMessage}
           </div>
         )}
@@ -143,16 +199,38 @@ export default function ReportForm() {
           className="btn-submit"
           disabled={status === 'loading'}
         >
-          {status === 'loading' ? 'جاري الإرسال...' : 'إرسال البلاغ'}
+          {status === 'loading' ? 'جاري إرسال البلاغ إلى الدعم...' : 'إرسال البلاغ الآن'}
         </button>
       </form>
+
       <style>{`
+        .required-star {
+          color: #DC2626;
+        }
+        .optional-tag {
+          font-size: 0.8rem;
+          font-weight: normal;
+          color: var(--color-text-muted);
+        }
         .report-success {
           background: var(--color-background);
           padding: var(--space-xl);
           border-radius: var(--border-radius-md);
           border: 1px solid var(--color-border);
           text-align: center;
+        }
+        .success-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: var(--color-success-bg);
+          color: var(--color-success-text);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin: 0 auto var(--space-md) auto;
         }
         .report-form-container {
           background: var(--color-background);
@@ -172,6 +250,7 @@ export default function ReportForm() {
         }
         .form-group label {
           font-weight: 500;
+          font-size: 0.95rem;
         }
         .form-group select,
         .form-group input,
@@ -180,21 +259,31 @@ export default function ReportForm() {
           border: 1px solid var(--color-border);
           border-radius: var(--border-radius-sm);
           font-family: inherit;
-          font-size: 1rem;
+          font-size: 0.95rem;
           outline: none;
           resize: vertical;
           background: white;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
         .form-group select:focus,
         .form-group input:focus,
         .form-group textarea:focus {
           border-color: var(--color-primary);
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .error-box {
+          background-color: #FEE2E2;
+          color: #DC2626;
+          padding: var(--space-sm) var(--space-md);
+          border-radius: var(--border-radius-sm);
+          font-size: 0.9rem;
+          border: 1px solid #FCA5A5;
         }
         .btn-submit {
-          margin-top: var(--space-sm);
+          margin-top: var(--space-xs);
           background-color: var(--color-primary);
           color: white;
-          padding: var(--space-md);
+          padding: 0.75rem var(--space-md);
           border-radius: var(--border-radius-md);
           font-size: 1rem;
           font-weight: 600;
@@ -209,7 +298,20 @@ export default function ReportForm() {
           opacity: 0.7;
           cursor: not-allowed;
         }
+        .btn-email {
+          background-color: white;
+          color: var(--color-primary);
+          border: 1px solid var(--color-primary);
+          border-radius: var(--border-radius-md);
+          font-size: 0.95rem;
+          font-weight: 600;
+          transition: all 0.2s;
+        }
+        .btn-email:hover {
+          background-color: #EEF2FF;
+        }
       `}</style>
     </div>
   );
 }
+
