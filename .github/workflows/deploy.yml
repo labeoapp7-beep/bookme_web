@@ -33,12 +33,20 @@ jobs:
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
         run: npm run build
 
-      - name: 🚀 Deploy to Hostinger Subdomain via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: /public_html/shaghir/ # مسار مجلد الدومين الفرعي في Hostinger
-          dangerous-clean-slate: false
+      - name: 🚀 Deploy to Hostinger via WebDAV (Web Disk)
+        run: |
+          # Install rclone for WebDAV sync
+          sudo apt-get update && sudo apt-get install -y rclone
+          
+          # Obscure the password for rclone
+          OBSCURED_PASS=$(rclone obscure "${{ secrets.FTP_PASSWORD }}")
+          
+          # Configure rclone via environment variables
+          export RCLONE_CONFIG_CPANEL_TYPE=webdav
+          export RCLONE_CONFIG_CPANEL_URL="https://${{ secrets.FTP_SERVER }}:2078"
+          export RCLONE_CONFIG_CPANEL_VENDOR=other
+          export RCLONE_CONFIG_CPANEL_USER="${{ secrets.FTP_USERNAME }}"
+          export RCLONE_CONFIG_CPANEL_PASS="$OBSCURED_PASS"
+          
+          # Sync the dist folder to public_html/shaghir
+          rclone sync ./dist/ cpanel:public_html/shaghir/ --no-check-certificate --timeout 5m --contimeout 30s -v
