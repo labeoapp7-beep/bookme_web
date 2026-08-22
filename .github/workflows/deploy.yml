@@ -48,5 +48,5 @@ jobs:
           export RCLONE_CONFIG_CPANEL_USER="${{ secrets.FTP_USERNAME }}"
           export RCLONE_CONFIG_CPANEL_PASS="$OBSCURED_PASS"
           
-          # Sync the dist folder to public_html/shaghir
-          rclone sync ./dist/ cpanel:public_html/shaghir/ --no-check-certificate --timeout 5m --contimeout 30s -v
+          # Sync the dist folder to public_html/shaghir.zimamak.com
+          rclone sync ./dist/ cpanel:public_html/shaghir.zimamak.com/ --no-check-certificate --timeout 5m --contimeout 30s -v
