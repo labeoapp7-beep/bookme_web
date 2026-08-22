@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { VacancyListing } from '../lib/supabase';
-import { Phone, MessageCircle, MapPin, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { getDirectionDisplay, type VacancyListing } from '../lib/supabase';
+import { Phone, MessageCircle, MapPin, FileText, ChevronDown, ChevronUp, Compass } from 'lucide-react';
 import './ChaletCard.css';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 export function ChaletCard({ listing }: Props) {
   const [showNotes, setShowNotes] = useState(false);
   const isReserved = listing.publish_status === 'reserved';
+  const directionLabel = getDirectionDisplay(listing.region_direction);
   
   // Format phone number for URLs
   const rawPhone = listing.contact_phone.replace(/\D/g, '');
@@ -17,7 +18,7 @@ export function ChaletCard({ listing }: Props) {
   // Pre-filled WhatsApp message
   const waText = encodeURIComponent(
     `السلام عليكم، رأيت إعلانكم في موقع شاغر اليوم عن ${listing.chalet_name}` +
-    (listing.section_number ? ` - ${listing.section_number}` : '') +
+    (listing.section_number ? ` - قسم ${listing.section_number}` : '') +
     ` وأودّ الاستفسار عن توفّره.`
   );
   
@@ -33,15 +34,31 @@ export function ChaletCard({ listing }: Props) {
       )}
       
       <div className="card-header">
-        <h3 className="text-h2 chalet-name">{listing.chalet_name}</h3>
-        {listing.section_number && (
-          <span className="section-badge">قسم {listing.section_number}</span>
-        )}
+        <div className="title-section">
+          <h3 className="text-h2 chalet-name">{listing.chalet_name}</h3>
+          <div className="badge-group">
+            {listing.section_number && (
+              <span className="section-badge">قسم {listing.section_number}</span>
+            )}
+            {directionLabel && (
+              <span className="direction-badge" title="الاتجاه">
+                <Compass size={12} className="inline-icon" />
+                {directionLabel}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
       
       <div className="card-location text-muted text-small">
-        <MapPin size={16} />
-        <span>{listing.city_name} - {listing.area_name}</span>
+        <MapPin size={16} className="location-pin-icon" />
+        <span className="location-city-area">{listing.city_name} - {listing.area_name}</span>
+        {listing.street_name && (
+          <span className="location-street">
+            <span className="bullet-sep">•</span>
+            <span>{listing.street_name.startsWith('شارع') ? listing.street_name : `شارع ${listing.street_name}`}</span>
+          </span>
+        )}
       </div>
       
       <div className="card-price">

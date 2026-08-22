@@ -39,10 +39,26 @@
   gap: var(--space-sm);
 }
 
+.title-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
 .chalet-name {
   color: var(--color-primary);
   margin: 0;
   word-break: break-word;
+  font-size: 1.35rem;
+}
+
+.badge-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-top: 2px;
 }
 
 .section-badge {
@@ -55,11 +71,54 @@
   white-space: nowrap;
 }
 
+.direction-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: #EEF2FF;
+  color: var(--color-primary);
+  border: 1px solid #E0E7FF;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.inline-icon {
+  flex-shrink: 0;
+}
+
 .card-location {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
   flex-wrap: wrap;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.location-pin-icon {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.location-city-area {
+  font-weight: 500;
+}
+
+.location-street {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-main);
+  font-weight: 500;
+}
+
+.bullet-sep {
+  color: var(--color-border);
+  font-size: 0.8rem;
+  margin-inline: 2px;
 }
 
 .card-price {
