@@ -5,11 +5,11 @@ import { VacanciesBoard } from './VacanciesBoard';
 // Mock Supabase
 vi.mock('../lib/supabase', async (importOriginal) => {
   const mod = await importOriginal<typeof import('../lib/supabase')>();
-  
+
   const mockQueryBuilder = {
     select: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
-    then: function(resolve: any) {
+    then: function (resolve: any) {
       resolve({
         data: [
           {
@@ -54,7 +54,7 @@ vi.mock('../lib/supabase', async (importOriginal) => {
 describe('VacanciesBoard filtering logic', () => {
   it('renders listings correctly and handles search', async () => {
     render(<VacanciesBoard />);
-    
+
     // Wait for the query to finish and elements to appear
     const rimalChalet = await screen.findByText('شاليه الرمال');
     expect(rimalChalet).toBeInTheDocument();
@@ -78,7 +78,7 @@ describe('VacanciesBoard filtering logic', () => {
 
     expect(screen.queryByText('شاليه الرمال')).not.toBeInTheDocument();
     expect(screen.getByText('شاليه الغروب')).toBeInTheDocument();
-    
+
     // Reset filters
     const resetBtn = screen.getByTitle('إعادة ضبط الفلاتر');
     fireEvent.click(resetBtn);
