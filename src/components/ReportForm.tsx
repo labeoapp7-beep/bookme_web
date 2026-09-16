@@ -63,13 +63,17 @@ export default function ReportForm() {
 
       // 2. Insert into Supabase table vac_reports for database archiving
       try {
-        await supabase
+        const { error: insertError } = await supabase
           .from('vac_reports')
           .insert({
             chalet_name: finalChaletName,
             reason,
-            details
+            details,
+            reporter_contact: reporterContact.trim() || null
           });
+        if (insertError) {
+          console.warn('Database insert warning:', insertError);
+        }
       } catch (dbErr) {
         console.warn('Database insert warning:', dbErr);
       }
